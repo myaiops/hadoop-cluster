@@ -1,16 +1,19 @@
 version: "3"
 services:
-  base:
-    build: ./base/
-    image: myaiops/hadoopbase:latest
+## commenting build as images can be pulled if someone wants to build them localy remove all comments
+#  base:
+#    build: ./base/
+#    image: myaiops/hadoopbase:latest
   namenode:
-    build: ./namenode/
+#    build: ./namenode/
     image: myaiops/hadoopnamenode:latest
     hostname: namenode
     restart: always
     ports:
       - 9870:9870
       - 9000:9000
+    networks:
+      - hadoop-cluster_default
     volumes:
       - hadoop_namenode:/hadoop/dfs/name
     environment:
@@ -19,12 +22,14 @@ services:
       - ./hadoop.env
 
   datanode:
-    build: ./datanode/
+#    build: ./datanode/
     image: myaiops/hadoopdatanode:latest
     hostname: datanode
     restart: always
     ports:
       - 9864:9864
+    networks:
+      - hadoop-cluster_default
     volumes:
       - hadoop_datanode:/hadoop/dfs/data
     environment:
@@ -34,19 +39,21 @@ services:
 
 
   resourcemanager:
-    build: ./resourcemanager/
+#    build: ./resourcemanager/
     image: myaiops/hadoopresourcemanager:latest
     hostname: resourcemanager
     restart: always
     ports:
       - 8088:8088
+    networks:
+      - hadoop-cluster_default
     environment:
       SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 "
     env_file:
       - ./hadoop.env
 
   nodemanager:
-    build: ./nodemanager/
+#    build: ./nodemanager/
     image: myaiops/hadoopnodemanager:latest
 
     restart: always
@@ -54,6 +61,8 @@ services:
       - 8042:8042
       - 19888:19888
       - 41137:41137
+    networks:
+      - hadoop-cluster_default
     environment:
       SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
     env_file:
@@ -62,12 +71,14 @@ services:
 
   
   historyserver:
-    build: ./historyserver/
+#    build: ./historyserver/
     image: myaiops/hadoophistoryserver:latest
     hostname: historyserver
     restart: always
     ports:
       - 8188:8188
+    networks:
+      - hadoop-cluster_default
     environment:
       SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
     volumes:
@@ -79,5 +90,9 @@ volumes:
   hadoop_namenode:
   hadoop_datanode:
   hadoop_historyserver:
+networks:
+  hadoop-cluster_default:
+    external:
+      name: hadoop-cluster_default
 
 

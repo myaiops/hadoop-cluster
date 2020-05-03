@@ -3,6 +3,7 @@ This Repo helps you to setup hadoop yarn cluster on your local system using dock
 
 ##Start hadoop Cluster
 
+<code>make init</code>
 <code> docker-compose up </code>
 
 ## Run your code on hadoop cluster using map reduce
